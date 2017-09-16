@@ -10,7 +10,7 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
 BOT_NAME = 'Open_Position_Parser'
-
+USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0"
 SPIDER_MODULES = ['Open_Position_Parser.spiders']
 NEWSPIDER_MODULE = 'Open_Position_Parser.spiders'
 FEED_EXPORT_ENCODING = 'utf-8'
@@ -20,6 +20,8 @@ FEED_EXPORT_ENCODING = 'utf-8'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
+COOKIES_ENABLED = False
+DOWNLOAD_DELAY = 5
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
