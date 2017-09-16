@@ -1,39 +1,51 @@
+# -*- coding: utf-8 -*-
 import scrapy
+from Open_Position_Parser.items import OpenPostion
 from re import sub
 
-def clear_text(text,sub_symbol):
-    return sub('[^a-zA-Zа-яА-Я]+', sub_symbol, text.strip())
+RABOTA_UA_BASE = 'https://rabota.ua'
+REGION_ID = 1
+# start_url = 'https://rabota.ua/jobsearch/vacancy_list?regionId=%s&keyWords=%s' % (REGION_ID, position_name)
+# position_name = clear_text(position_name,'+')
+def check_keywords_entry(text,keywords):
+    occurancies = 0
+    for word in keywords:
+        pass
 
+def clear_text(text,sub_symbol=' '):
+    text.encode('utf-8')
+    return sub('[^a-zA-Zа-яА-Яії+#]+', sub_symbol, text.strip())
+
+
+
+# parse_functions = {RABOTA_UA_BASE:rabota_ua_parse}
 class PositionSpider(scrapy.Spider):
     name = "position"
-    # Now job search only for Kyiv
-    REGION_ID = 1
-
-    def __init__(self,position_name,*args,**kwargs):
+    def __init__(self,start_url,base_url,*args,**kwargs):
+        # Now job search only for Kyiv 
         super(PositionSpider, self).__init__(*args,**kwargs)
         # Removing all unnecessary symbols
-        position_name = clear_text(position_name,'+')
-        start_url = '''
-                    https://rabota.ua/jobsearch/vacancy_list?regionId=%s&keyWords=%s
-                    ''' % (REGION_ID, position_name)
         self.start_urls = [start_url]
+        self.base_url = base_url
 
     def start_request(self):
-        for url in self.urls:
-            yield scrapy.Request(url=url,callback=self.parse)
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,callback=self.rabota_ua_parse)
 
     def parse(self,response):
-        '''
-        Simple test for Junior Python position
-
-        @url https://rabota.ua/jobsearch/vacancy_list?regionId=1&keyWords=Junior+Python
-        @scrapes Name Url Company Descriptio
-        '''
+        # Result is list of OpenPosition items
+        result = []
         openings = response.css('table.f-vacancylist-tablewrap tr')
         for open_position in openings:
-            name = open_position.css('h3 a::text').extract()
-            href = open_position.css('h3 a::attr(href)').extract()
-            company_name = open_position.css('p.f-vacancylist-companyname a::text').extract()
-            description = open_position.css('p.f-vacancylist-shortdescr::text').extract()
+            position_info = OpenPostion()
+            position_info['name'] = clear_text(open_position.css('h3 a::text').extract_first())
+            position_info['href'] = RABOTA_UA_BASE + open_position.css('h3 a::attr(href)').extract_first()
+            position_info['company_name'] = clear_text(open_position.css('p.f-vacancylist-companyname a::text').extract_first())
+            position_info['description'] = clear_text(open_position.css('p.f-vacancylist-shortdescr::text').extract_first())
+            result.append(position_info)
+        return result
+
+
+            
 
 

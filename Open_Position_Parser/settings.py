@@ -13,7 +13,7 @@ BOT_NAME = 'Open_Position_Parser'
 
 SPIDER_MODULES = ['Open_Position_Parser.spiders']
 NEWSPIDER_MODULE = 'Open_Position_Parser.spiders'
-
+FEED_EXPORT_ENCODING = 'utf-8'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'Open_Position_Parser (+http://www.yourdomain.com)'
